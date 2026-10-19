@@ -12,6 +12,13 @@ interface ServiceItem {
 	quantity: number;
 }
 
+const MIN_QUANTITY = 1;
+const MAX_QUANTITY = 10;
+
+function isValidQuantity(value: number): boolean {
+	return Number.isInteger(value) && value >= MIN_QUANTITY && value <= MAX_QUANTITY;
+}
+
 const availableServices: Service[] = [
 	{ id: 1, name: 'Разработка лендинга', price: 50000 },
 	{ id: 2, name: 'Интернет-магазин', price: 150000 },
@@ -31,7 +38,7 @@ export default function ProjectBuilder() {
 
 	function addService() {
 		const service = availableServices.find(s => String(s.id) === selectedServiceId);
-		if (!service) return;
+		if (!service || !isValidQuantity(quantity)) return;
 
 		setSelectedServices(prev => {
 			const alreadyAdded = prev.some(item => item.service.id === service.id);
@@ -67,14 +74,14 @@ export default function ProjectBuilder() {
 
 				<input
 					type="number"
-					min={1}
-					max={10}
+					min={MIN_QUANTITY}
+					max={MAX_QUANTITY}
 					value={quantity}
 					onChange={event => setQuantity(Number(event.target.value))}
 					className="service-count"
 				/>
 
-				<button onClick={addService} disabled={!selectedServiceId}>
+				<button onClick={addService} disabled={!selectedServiceId || !isValidQuantity(quantity)}>
 					Добавить
 				</button>
 			</div>
